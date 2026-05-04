@@ -1,4 +1,5 @@
 const mysql = require('mysql2/promise');
+require('dotenv').config();
 
 const db = mysql.createPool({
     host: process.env.DB_HOST,
@@ -10,16 +11,15 @@ const db = mysql.createPool({
     queueLimit: 0
 });
 
-// 🔍 Function to test connection
-const testConnection = async () => {
-    try {
-        const connection = await db.getConnection();
-        console.log("✅ MySQL Database connected successfully");
-        connection.release(); // release back to pool
-    } catch (error) {
-        console.error("❌ Database connection failed:", error.message);
-        process.exit(1); // stop server if DB fails
-    }
-};
+// Test the connection immediately
+db.getConnection()
+    .then(conn => {
+        console.log("✅ Connected to support Database");
+        conn.release();
+    })
+    .catch(err => {
+        console.error("❌ DB Connection Failed: ", err.message);
+        console.log("Check if XAMPP MySQL is started and DB 'support' exists.");
+    });
 
-module.exports = { db, testConnection };
+module.exports = db;
