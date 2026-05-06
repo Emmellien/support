@@ -7,9 +7,13 @@ const verifyToken = require('../middleware/auth');
  * TASK 13: Generate Daily Reports
  * Indicates: Service Date, Plate Number, Service Name, and Amount Paid.
  */
+// Modify the /reports/daily route
 router.get('/reports/daily', verifyToken, async (req, res) => {
     try {
-        const sql = `
+        // Get date from query params (e.g., /api/reports/daily?date=2026-05-06)
+        const selectedDate = req.query.date; 
+        
+        let sql = `
             SELECT 
                 DATE_FORMAT(SR.ServiceDate, '%Y-%m-%d %H:%i') AS Date,
                 C.PlateNumber,
@@ -22,17 +26,19 @@ router.get('/reports/daily', verifyToken, async (req, res) => {
             JOIN Services S ON SR.ServiceCode = S.ServiceCode
             JOIN Payment P ON SR.RecordNumber = P.RecordNumber
             JOIN users U ON P.ReceivedBy = U.id
-            WHERE DATE(SR.ServiceDate) = CURDATE()
+            WHERE DATE(SR.ServiceDate) = ?
             ORDER BY SR.ServiceDate DESC`;
 
-        const [reportData] = await db.query(sql);
+        // Default to current date if none provided
+        const queryDate = selectedDate || new Date().toISOString().split('T')[0];
+
+        const [reportData] = await db.query(sql, [queryDate]);
         
-        // Calculate Total Revenue for the day
         const totalRevenue = reportData.reduce((sum, item) => sum + parseFloat(item.AmountPaid), 0);
 
         res.json({
             success: true,
-            date: new Date().toISOString().split('T')[0],
+            date: queryDate,
             totalRevenue,
             data: reportData
         });

@@ -1,0 +1,20 @@
+{
+  "name": "support001",
+  "version": "1.0.0",
+  "description": "Support app with login/register and React templates using Tailwind CSS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"No tests yet\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Emmellien/support.git"
+  },
+  "keywords": ["react", "tailwind", "auth"],
+  "author": "Emmellien",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Emmellien/support/issues"
+  },
+  "homepage": "https://github.com/Emmellien/support#readme"
+}
